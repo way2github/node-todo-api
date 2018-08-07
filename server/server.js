@@ -1,17 +1,21 @@
-const mongoose = require('mongoose');
+var express = require('express');
+var bodyParser = require('body-parser');
 
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/School');
+var { mongoose } = require('./db/mongoose');
+var { SchoolModel } = require('./models/school');
 
-var schoolModel = mongoose.model('School', {
-    name: { type: String, required: true, minlength: 1, trim: true },
-    age: { type: Number, required: true, default: 5 },
-    secondLang: { type: String, required: true, default: 'Bengali' }
+var app = express();
+
+app.use(bodyParser.json());
+
+app.post('/school', (req, res) => {
+    console.log(req.body);
+    var newSchool = new SchoolModel({
+        name: req.body.name
+    });
+    newSchool.save().then((doc) => {res.status(201).send(doc);}, (err) => {res.status(400).send(err);})
 });
 
-var newSchoolModel = new schoolModel({
-    name: ' Ronav ', location:'Kolkata'
+app.listen(3000, () => {
+    console.log('Started on Port 3000');
 });
-
-newSchoolModel.save()
-    .then((res) => { console.log(JSON.stringify(res, undefined, 2)); }, (err) => { console.log(err); });
