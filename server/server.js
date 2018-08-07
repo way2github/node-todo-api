@@ -11,7 +11,8 @@ app.use(bodyParser.json());
 app.post('/school', (req, res) => {
     console.log(req.body);
     var newSchool = new SchoolModel({
-        name: req.body.name
+        name: req.body.name,
+        age: req.body.age
     });
     newSchool.save().then((doc) => {res.status(201).send(doc);}, (err) => {res.status(400).send(err);})
 });
@@ -19,3 +20,5 @@ app.post('/school', (req, res) => {
 app.listen(3000, () => {
     console.log('Started on Port 3000');
 });
+
+module.exports = {app};
