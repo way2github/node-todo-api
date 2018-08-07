@@ -11,7 +11,7 @@ MongoClient.connect('mongodb://127.0.0.1:27017/School', (err, db) => {
 
     // Create
     db.collection('Students').insertMany([
-        { name: 'Ronav', gender: 'M', secondLanguage: 'Hindi' },
+        { name: 'Ronav', gender: 'M', age: 5, secondLanguage: 'Hindi' },
         { name: 'Arnesh', gender: 'M', secondLanguage: 'Hindi' },
         { name: 'Avery', gender: 'F', secondLanguage: 'Bengali' },
         { name: 'Debangi', gender: 'F', secondLanguage: 'Bengali' }],
@@ -58,6 +58,16 @@ MongoClient.connect('mongodb://127.0.0.1:27017/School', (err, db) => {
             });
 
     // Update
-
+    db.collection('Students')
+        .findOneAndUpdate({name: 'Ronav'}, 
+        {$set: {name: 'Arya'}, $inc: {age: 1}}, 
+        {returnOriginal: false})
+        .then(
+            (docs) => {
+                console.log(JSON.stringify(docs, undefined, 2));
+                console.log(`### Update done ### \nname changed to ${docs.value.name}`);
+            }, (err) => {
+                console.log('Unable to find ', err);
+            });
     db.close();
 });
