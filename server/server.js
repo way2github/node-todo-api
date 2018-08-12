@@ -2,19 +2,19 @@ var express = require('express');
 var bodyParser = require('body-parser');
 
 var { mongoose } = require('./db/mongoose');
-var { SchoolModel } = require('./models/school');
+var { Student } = require('./models/student');
 
 var app = express();
 
 app.use(bodyParser.json());
 
-app.post('/school', (req, res) => {
+app.post('/student', (req, res) => {
     console.log(req.body);
-    var newSchool = new SchoolModel({
+    var newStudent = new Student({
         name: req.body.name,
         age: req.body.age
     });
-    newSchool.save().then((doc) => {res.status(201).send(doc);}, (err) => {res.status(400).send(err);})
+    newStudent.save().then((doc) => {res.status(201).send(doc);}, (err) => {res.status(400).send(err);})
 });
 
 app.listen(3000, () => {

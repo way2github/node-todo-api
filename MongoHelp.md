@@ -133,3 +133,41 @@ app.post('/school', (req, res) => {
 app.listen(3000, () => {
     console.log('Started on Port 3000');
 });
+
+===========================================================================
+const request = require('supertest');
+//const { assert } = require('chai');
+const { expect } = require('chai');
+
+const { app } = require('./../server');
+const { SchoolModel } = require('./../models/school');
+
+
+beforeEach((done) => {
+    SchoolModel.remove({}).then(() => { done(); });
+});
+
+describe('Test POST /school', () => {
+    it('should create a new student', (done) => {
+        var name = 'Ayush';
+        var age = 10;
+        request(app)
+            .post('/school')
+            .send({ name, age }, { name, age })
+            .expect(201)
+            .expect((res) => { expect(res.body.name).to.equal(name); })
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+                SchoolModel
+                    .find()
+                    .then((school) => {
+                        expect(school.length).to.equal(1);
+                        expect(school[0].name).to.equal(name);
+                        done();
+                    })
+                    .catch((e) => { done(e); })
+            });
+    });
+});
