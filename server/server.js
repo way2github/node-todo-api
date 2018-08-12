@@ -14,11 +14,19 @@ app.post('/student', (req, res) => {
         name: req.body.name,
         age: req.body.age
     });
-    newStudent.save().then((doc) => {res.status(201).send(doc);}, (err) => {res.status(400).send(err);})
+    newStudent.save().then((doc) => { res.status(201).send(doc); }, (err) => { res.status(400).send(err); })
+});
+
+app.get('/student', (req, res) => {
+    Student.find().then((student) => {
+        res.send({ student });
+    }, (err) => {
+        res.status(400).send(err);
+    });
 });
 
 app.listen(3000, () => {
     console.log('Started on Port 3000');
 });
 
-module.exports = {app};
+module.exports = { app };

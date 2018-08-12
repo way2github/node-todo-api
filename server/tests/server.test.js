@@ -5,14 +5,43 @@ const { expect } = require('chai');
 const { app } = require('./../server');
 const { Student } = require('./../models/student');
 
+const students = [{ name: 'Atin', age: 5.5 }, { name: 'Arnesh', age: 5 }];
 
 beforeEach((done) => {
-    Student.remove({}).then(() => { done(); });
+    Student.remove({}).then(() => {
+        return Student.insertMany(students);
+    }).then(() => done());
 });
 
+describe('Test GET /student', () => {
+    it('should get all students', (done) => {
+        request(app)
+            .get('/student')
+            .send()
+            .expect(200)
+            .expect((res) => {
+                //console.log(res.body);
+                expect(res.body.student.length).to.equal(2);
+                expect(res.body.student[0].name).to.equal(students[0].name);
+                expect(res.body.student[1].name).to.equal(students[1].name);
+            })
+            .end((err, res) => {
+                if (err) throw err;
+                Student
+                    .find()
+                    .then((student) => {
+                        expect(student.length).to.equal(2);
+                        expect(student[0].name).to.equal(students[0].name);
+                        expect(student[1].name).to.equal(students[1].name);
+                        done();
+                    })
+                    .catch((e) => { done(e); })
+            });
+    });
+});
 describe('Test POST /student', () => {
     it('should create a new student', (done) => {
-        var name = 'Ayush';
+        var name = 'Ronav';
         var age = 10;
         request(app)
             .post('/student')
@@ -26,8 +55,8 @@ describe('Test POST /student', () => {
                 Student
                     .find()
                     .then((student) => {
-                        expect(student.length).to.equal(1);
-                        expect(student[0].name).to.equal(name);
+                        expect(student.length).to.equal(3);
+                        expect(student[2].name).to.equal(name);
                         done();
                     })
                     .catch((e) => { done(e); })
@@ -44,7 +73,7 @@ describe('Test POST /student', () => {
                 }
 
                 Student.find().then((student) => {
-                    expect(student.length).to.equal(0);
+                    expect(student.length).to.equal(2);
                     done();
                 })
                     .catch((e) => { done(e); });
