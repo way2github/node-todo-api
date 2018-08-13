@@ -171,3 +171,33 @@ describe('Test POST /school', () => {
             });
     });
 });
+
+============================================================================
+
+app.get('/student', (req, res) => {
+    Student.find().then((student) => {
+        res.send({ student });
+    }, (err) => {
+        res.status(400).send(err);
+    });
+});
+============================================================================
+
+
+it('should not create a new student with empty data', (done) => {
+        request(app)
+            .post('/student')
+            .send({})
+            .expect(400)
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+
+                Student.find().then((student) => {
+                    expect(student.length).to.equal(2);
+                    done();
+                })
+                    .catch((e) => { done(e); });
+            });
+    });
